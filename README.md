@@ -14,7 +14,7 @@ Installation
 
 ### The zabbix-slack-script
 
-This [`zabbix-slack-script.sh`](https://github.com/lalkrishnak/zabbix-hub/zabbix-slack-script.sh)script needs to be placed in the `AlertScriptsPath` directory that is specified within the Zabbix servers' configuration file (`zabbix_server.conf`) and must be executable by the user running the zabbix_server binary (usually "zabbix") on the Zabbix server:
+This [`zabbix-slack-script.sh`](https://github.com/lalkrishnak/zabbix-hub/zabbix-slack-script.sh) script needs to be placed in the `AlertScriptsPath` directory that is specified within the Zabbix servers' configuration file (`zabbix_server.conf`) and must be executable by the user running the zabbix_server binary (usually "zabbix") on the Zabbix server:
 
 	[root@zabbix ~]# grep AlertScriptsPath /etc/zabbix/zabbix_server.conf
 	### Option: AlertScriptsPath
