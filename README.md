@@ -24,3 +24,17 @@ This [`zabbix-slack-script.sh`](https://github.com/lalkrishnak/zabbix-hub/zabbix
 	-rwxr-xr-x 1 root root 1.4K Dec 27 13:48 /usr/local/share/zabbix/alertscripts/zabbix-slack-script.sh
 
 If you do change `AlertScriptsPath` (or any other values) within `zabbix_server.conf`, a restart of the Zabbix server software is required.
+
+Zabbix Sendmail Script
+========================
+
+About
+-----
+This is a Bash script that uses the custom alert script functionality within [Zabbix](http://www.zabbix.com/) along with the $(which mail) command feature.	
+
+Installation
+------------
+
+Place the script in the AlertScriptPath directly and must be executable by the user running the zabbix_server binary on the zabbix server.
+
+	$ chmod +x /usr/local/share/zabbix/alertscripts/zabbix-sendmail
