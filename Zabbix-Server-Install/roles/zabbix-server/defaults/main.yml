@@ -9,6 +9,7 @@ zabbix_server_CacheSize: "8M"
 zabbix_server_CacheUpdateFrequency: "60"
 zabbix_server_DBHost: "localhost"
 zabbix_server_DBName: "zabbix"
+zabbix_server_DBUser: "zabbix"
 zabbix_server_DBPassword: "zabbix"
 zabbix_server_DBPort: "3306"
 zabbix_server_DBSchema: ~
