@@ -78,3 +78,13 @@
   environment:
     PATH: "{{ ansible_env.PATH }}:{{ zabbix_server_mysql_bindir }}"
   when: table_exists.stdout.find('user_history') == -1
+  
+  - name: Copy Zabbix Alerts Scripts
+    get_url:
+       url: https://raw.githubusercontent.com/lalkrishnak/zabbix-hub/master/{{ item }}
+       dest: /usr/lib/zabbix/alertscripts/{{ item }}
+       mode: 0755
+    with_items:
+      - zabbix-jira.py
+      - zabbix-sendmail.sh
+      - zabbix-slack-script.sh
