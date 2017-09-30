@@ -1,4 +1,8 @@
-#{{ ansible_managed }}
+# This is a configuration file for Zabbix Server process
+# To get more information about Zabbix,
+# visit http://www.zabbix.com
+
+############ GENERAL PARAMETERS #################
 
 ### Option: ListenPort
 #	Listen port for trapper.
@@ -7,17 +11,18 @@
 # Range: 1024-32767
 # Default:
 # ListenPort=10051
-ListenPort={{zbx_server_ListenPort}}
+{% if zabbix_server_ListenPort %}
+ListenPort={{ zabbix_server_ListenPort }}
+{% endif %}
 
 ### Option: SourceIP
 #	Source IP address for outgoing connections.
 #
 # Mandatory: no
 # Default:
-{% if zbx_server_SourceIP %}
-SourceIP={{zbx_server_SourceIP}}
-{% else %}
 # SourceIP=
+{% if zabbix_server_SourceIP %}
+SourceIP={{ zabbix_server_SourceIP }}
 {% endif %}
 
 ### Option: LogFile
@@ -26,12 +31,10 @@ SourceIP={{zbx_server_SourceIP}}
 #
 # Mandatory: no
 # Default:
-{% if zbx_server_LogFile %}
-LogFile={{zbx_server_LogFile}}
-{% else %}
 # LogFile=
+{% if zabbix_server_LogFile %}
+LogFile={{ zabbix_server_LogFile }}
 {% endif %}
-
 
 ### Option: LogFileSize
 #	Maximum size of log file in MB.
@@ -41,12 +44,13 @@ LogFile={{zbx_server_LogFile}}
 # Range: 0-1024
 # Default:
 # LogFileSize=1
-
-LogFileSize={{zbx_server_LogFileSize}}
+{% if zabbix_server_LogFileSize %}
+LogFileSize={{ zabbix_server_LogFileSize }}
+{% endif %}
 
 ### Option: DebugLevel
 #	Specifies debug level
-#	0 - no debug
+#	0 - basic information about starting and stopping of Zabbix processes
 #	1 - critical information
 #	2 - error information
 #	3 - warnings
@@ -55,7 +59,10 @@ LogFileSize={{zbx_server_LogFileSize}}
 # Mandatory: no
 # Range: 0-4
 # Default:
-DebugLevel={{zbx_server_DebugLevel}}
+# DebugLevel=3
+{% if zabbix_server_DebugLevel %}
+DebugLevel={{ zabbix_server_DebugLevel }}
+{% endif %}
 
 ### Option: PidFile
 #	Name of PID file.
@@ -63,8 +70,9 @@ DebugLevel={{zbx_server_DebugLevel}}
 # Mandatory: no
 # Default:
 # PidFile=/tmp/zabbix_server.pid
-
-PidFile={{zbx_server_PidFile}}
+{% if zabbix_server_PidFile %}
+PidFile={{ zabbix_server_PidFile }}
+{% endif %}
 
 ### Option: DBHost
 #	Database host name.
@@ -73,7 +81,10 @@ PidFile={{zbx_server_PidFile}}
 #
 # Mandatory: no
 # Default:
-DBHost={{zbx_server_DBHost}}
+# DBHost=localhost
+{% if zabbix_server_DBHost %}
+DBHost={{ zabbix_server_DBHost }}
+{% endif %}
 
 ### Option: DBName
 #	Database name.
@@ -82,18 +93,18 @@ DBHost={{zbx_server_DBHost}}
 # Mandatory: yes
 # Default:
 # DBName=
-
-DBName={{zbx_server_DBName}}
+{% if zabbix_server_DBName %}
+DBName={{ zabbix_server_DBName }}
+{% endif %}
 
 ### Option: DBSchema
-#	Schema name. Used for IBM DB2.
+#	Schema name. Used for IBM DB2 and PostgreSQL.
 #
 # Mandatory: no
 # Default:
-{% if zbx_server_DBSchema %}
-DBSchema={{zbx_server_DBSchema}}
-{% else %}
 # DBSchema=
+{% if zabbix_server_DBSchema %}
+DBSchema={{ zabbix_server_DBSchema }}
 {% endif %}
 
 ### Option: DBUser
@@ -102,8 +113,9 @@ DBSchema={{zbx_server_DBSchema}}
 # Mandatory: no
 # Default:
 # DBUser=
-
-DBUser={{zbx_server_DBUser}}
+{% if zabbix_server_DBUser %}
+DBUser={{ zabbix_server_DBUser }}
+{% endif %}
 
 ### Option: DBPassword
 #	Database password. Ignored for SQLite.
@@ -112,7 +124,9 @@ DBUser={{zbx_server_DBUser}}
 # Mandatory: no
 # Default:
 # DBPassword=
-DBPassword={{zbx_server_DBPassword}}
+{% if zabbix_server_DBPassword %}
+DBPassword={{ zabbix_server_DBPassword }}
+{% endif %}
 
 ### Option: DBSocket
 #	Path to MySQL socket.
@@ -120,8 +134,9 @@ DBPassword={{zbx_server_DBPassword}}
 # Mandatory: no
 # Default:
 # DBSocket=/tmp/mysql.sock
-
-DBSocket={{zbx_server_DBSocket}}
+{% if zabbix_server_DBSocket %}
+DBSocket={{ zabbix_server_DBSocket }}
+{% endif %}
 
 ### Option: DBPort
 #	Database port when not using local socket. Ignored for SQLite.
@@ -129,10 +144,9 @@ DBSocket={{zbx_server_DBSocket}}
 # Mandatory: no
 # Range: 1024-65535
 # Default (for MySQL):
-{% if zbx_server_DBPort %}
-DBPort={{zbx_server_DBPort}}
-{% else %}
 # DBPort=3306
+{% if zabbix_server_DBPort %}
+DBPort={{ zabbix_server_DBPort }}
 {% endif %}
 
 ############ ADVANCED PARAMETERS ################
@@ -143,7 +157,10 @@ DBPort={{zbx_server_DBPort}}
 # Mandatory: no
 # Range: 0-1000
 # Default:
-StartPollers={{zbx_server_StartPollers}}
+# StartPollers=5
+{% if zabbix_server_StartPollers %}
+StartPollers={{ zabbix_server_StartPollers }}
+{% endif %}
 
 ### Option: StartIPMIPollers
 #	Number of pre-forked instances of IPMI pollers.
@@ -151,29 +168,37 @@ StartPollers={{zbx_server_StartPollers}}
 # Mandatory: no
 # Range: 0-1000
 # Default:
-{% if zbx_server_StartIPMIPollers %}
-StartIPMIPollers={{zbx_server_StartIPMIPollers}}
-{% else %}
 # StartIPMIPollers=0
+{% if zabbix_server_StartIPMIPollers %}
+StartIPMIPollers={{ zabbix_server_StartIPMIPollers }}
 {% endif %}
 
 ### Option: StartPollersUnreachable
-#	Number of pre-forked instances of pollers for unreachable hosts (including IPMI).
+#	Number of pre-forked instances of pollers for unreachable hosts (including IPMI and Java).
+#	At least one poller for unreachable hosts must be running if regular, IPMI or Java pollers
+#	are started.
 #
 # Mandatory: no
 # Range: 0-1000
 # Default:
-StartPollersUnreachable={{zbx_server_StartPollersUnreachable}}
+# StartPollersUnreachable=1
+{% if zabbix_server_StartPollersUnreachable %}
+StartPollersUnreachable={{ zabbix_server_StartPollersUnreachable }}
+{% endif %}
 
 ### Option: StartTrappers
 #	Number of pre-forked instances of trappers.
-#	Trappers accept incoming connections from Zabbix sender, active agents, active proxies and child nodes.
-#	At least one trapper process must be running to display server availability in the frontend.
+#	Trappers accept incoming connections from Zabbix sender, active agents and active proxies.
+#	At least one trapper process must be running to display server availability and view queue
+#	in the frontend.
 #
 # Mandatory: no
 # Range: 0-1000
 # Default:
-StartTrappers={{zbx_server_StartTrappers}}
+# StartTrappers=5
+{% if zabbix_server_StartTrappers %}
+StartTrappers={{ zabbix_server_StartTrappers }}
+{% endif %}
 
 ### Option: StartPingers
 #	Number of pre-forked instances of ICMP pingers.
@@ -181,7 +206,10 @@ StartTrappers={{zbx_server_StartTrappers}}
 # Mandatory: no
 # Range: 0-1000
 # Default:
-StartPingers={{zbx_server_StartPingers}}
+# StartPingers=1
+{% if zabbix_server_StartPingers %}
+StartPingers={{ zabbix_server_StartPingers }}
+{% endif %}
 
 ### Option: StartDiscoverers
 #	Number of pre-forked instances of discoverers.
@@ -189,7 +217,10 @@ StartPingers={{zbx_server_StartPingers}}
 # Mandatory: no
 # Range: 0-250
 # Default:
-StartDiscoverers={{zbx_server_StartDiscoverers}}
+# StartDiscoverers=1
+{% if zabbix_server_StartDiscoverers %}
+StartDiscoverers={{ zabbix_server_StartDiscoverers }}
+{% endif %}
 
 ### Option: StartHTTPPollers
 #	Number of pre-forked instances of HTTP pollers.
@@ -197,7 +228,10 @@ StartDiscoverers={{zbx_server_StartDiscoverers}}
 # Mandatory: no
 # Range: 0-1000
 # Default:
-StartHTTPPollers={{zbx_server_StartHTTPPollers}}
+# StartHTTPPollers=1
+{% if zabbix_server_StartHTTPPollers %}
+StartHTTPPollers={{ zabbix_server_StartHTTPPollers }}
+{% endif %}
 
 ### Option: StartTimers
 #	Number of pre-forked instances of timers.
@@ -207,7 +241,10 @@ StartHTTPPollers={{zbx_server_StartHTTPPollers}}
 # Mandatory: no
 # Range: 1-1000
 # Default:
-StartTimers={{zbx_server_StartTimers}}
+# StartTimers=1
+{% if zabbix_server_StartTimers %}
+StartTimers={{ zabbix_server_StartTimers }}
+{% endif %}
 
 ### Option: JavaGateway
 #	IP address (or hostname) of Zabbix Java gateway.
@@ -215,10 +252,9 @@ StartTimers={{zbx_server_StartTimers}}
 #
 # Mandatory: no
 # Default:
-{% if zbx_server_JavaGateway %}
-JavaGateway={{zbx_server_JavaGateway}}
-{% else %}
 # JavaGateway=
+{% if zabbix_server_JavaGateway %}
+JavaGateway={{ zabbix_server_JavaGateway }}
 {% endif %}
 
 ### Option: JavaGatewayPort
@@ -227,7 +263,10 @@ JavaGateway={{zbx_server_JavaGateway}}
 # Mandatory: no
 # Range: 1024-32767
 # Default:
-JavaGatewayPort={{zbx_server_JavaGatewayPort}}
+# JavaGatewayPort=10052
+{% if zabbix_server_JavaGatewayPort %}
+JavaGatewayPort={{ zabbix_server_JavaGatewayPort }}
+{% endif %}
 
 ### Option: StartJavaPollers
 #	Number of pre-forked instances of Java pollers.
@@ -235,7 +274,10 @@ JavaGatewayPort={{zbx_server_JavaGatewayPort}}
 # Mandatory: no
 # Range: 0-1000
 # Default:
-StartJavaPollers={{zbx_server_StartJavaPollers}}
+# StartJavaPollers=0
+{% if zabbix_server_StartJavaPollers %}
+StartJavaPollers={{ zabbix_server_StartJavaPollers }}
+{% endif %}
 
 ### Option: StartVMwareCollectors
 #	Number of pre-forked vmware collector instances.
@@ -243,7 +285,10 @@ StartJavaPollers={{zbx_server_StartJavaPollers}}
 # Mandatory: no
 # Range: 0-250
 # Default:
-StartVMwareCollectors={{zbx_server_StartVMwareCollectors}}
+# StartVMwareCollectors=0
+{% if zabbix_server_StartVMwareCollectors %}
+StartVMwareCollectors={{ zabbix_server_StartVMwareCollectors }}
+{% endif %}
 
 ### Option: VMwareFrequency
 #	How often Zabbix will connect to VMware service to obtain a new data.
@@ -251,7 +296,10 @@ StartVMwareCollectors={{zbx_server_StartVMwareCollectors}}
 # Mandatory: no
 # Range: 10-86400
 # Default:
-VMwareFrequency={{zbx_server_VMwareFrequency}}
+# VMwareFrequency=60
+{% if zabbix_server_VMwareFrequency %}
+VMwareFrequency={{ zabbix_server_VMwareFrequency }}
+{% endif %}
 
 ### Option: VMwareCacheSize
 #	Size of VMware cache, in bytes.
@@ -261,7 +309,10 @@ VMwareFrequency={{zbx_server_VMwareFrequency}}
 # Mandatory: no
 # Range: 256K-2G
 # Default:
-VMwareCacheSize={{zbx_server_VMwareCacheSize}}
+# VMwareCacheSize=8M
+{% if zabbix_server_VMwareCacheSize %}
+VMwareCacheSize={{ zabbix_server_VMwareCacheSize }}
+{% endif %}
 
 ### Option: SNMPTrapperFile
 #	Temporary file used for passing data from SNMP trap daemon to the server.
@@ -270,8 +321,9 @@ VMwareCacheSize={{zbx_server_VMwareCacheSize}}
 # Mandatory: no
 # Default:
 # SNMPTrapperFile=/tmp/zabbix_traps.tmp
-
-SNMPTrapperFile={{zbx_server_SNMPTrapperFile}}
+{% if zabbix_server_SNMPTrapperFile %}
+SNMPTrapperFile={{ zabbix_server_SNMPTrapperFile }}
+{% endif %}
 
 ### Option: StartSNMPTrapper
 #	If 1, SNMP trapper process is started.
@@ -279,7 +331,10 @@ SNMPTrapperFile={{zbx_server_SNMPTrapperFile}}
 # Mandatory: no
 # Range: 0-1
 # Default:
-StartSNMPTrapper={{zbx_server_StartSNMPTrapper}}
+# StartSNMPTrapper=0
+{% if zabbix_server_StartSNMPTrapper %}
+StartSNMPTrapper={{ zabbix_server_StartSNMPTrapper }}
+{% endif %}
 
 ### Option: ListenIP
 #	List of comma delimited IP addresses that the trapper should listen on.
@@ -287,22 +342,26 @@ StartSNMPTrapper={{zbx_server_StartSNMPTrapper}}
 #
 # Mandatory: no
 # Default:
-{% if zbx_server_ListenIP %}
-ListenIP={{zbx_server_ListenIP}}
-{% else %}
 # ListenIP=0.0.0.0
-# ListenIP=127.0.0.1
+{% if zabbix_server_ListenIP %}
+ListenIP={{ zabbix_server_ListenIP }}
 {% endif %}
-
 
 ### Option: HousekeepingFrequency
 #	How often Zabbix will perform housekeeping procedure (in hours).
-#	Housekeeping is removing unnecessary information from history, alert, and alarms tables.
+#	Housekeeping is removing unnecessary information from history, alert, alarm, and other tables.
+#	To prevent housekeeper from being overloaded (for example, when history and trend periods
+#	are greatly reduced), no more than 4xHousekeepingFrequency hours of outdated history are
+#	deleted in one housekeeping cycle, for each item.
+#	To lower load on server startup housekeeping is postponed for 30 minutes after server start.
 #
 # Mandatory: no
 # Range: 1-24
 # Default:
-HousekeepingFrequency={{zbx_server_HousekeepingFrequency}}
+# HousekeepingFrequency=1
+{% if zabbix_server_HousekeepingFrequency %}
+HousekeepingFrequency={{ zabbix_server_HousekeepingFrequency }}
+{% endif %}
 
 ### Option: MaxHousekeeperDelete
 #	The table "housekeeper" contains "tasks" for housekeeping procedure in the format:
@@ -315,7 +374,10 @@ HousekeepingFrequency={{zbx_server_HousekeepingFrequency}}
 # Mandatory: no
 # Range: 0-1000000
 # Default:
-MaxHousekeeperDelete={{zbx_server_MaxHousekeeperDelete}}
+# MaxHousekeeperDelete=500
+{% if zabbix_server_MaxHousekeeperDelete %}
+MaxHousekeeperDelete={{ zabbix_server_MaxHousekeeperDelete }}
+{% endif %}
 
 ### Option: SenderFrequency
 #	How often Zabbix will try to send unsent alerts (in seconds).
@@ -323,16 +385,22 @@ MaxHousekeeperDelete={{zbx_server_MaxHousekeeperDelete}}
 # Mandatory: no
 # Range: 5-3600
 # Default:
-SenderFrequency={{zbx_server_SenderFrequency}}
+# SenderFrequency=30
+{% if zabbix_server_SenderFrequency %}
+SenderFrequency={{ zabbix_server_SenderFrequency }}
+{% endif %}
 
 ### Option: CacheSize
 #	Size of configuration cache, in bytes.
 #	Shared memory size for storing host, item and trigger data.
 #
 # Mandatory: no
-# Range: 128K-2G
+# Range: 128K-8G
 # Default:
-CacheSize={{zbx_server_CacheSize}}
+# CacheSize=8M
+{% if zabbix_server_CacheSize %}
+CacheSize={{ zabbix_server_CacheSize }}
+{% endif %}
 
 ### Option: CacheUpdateFrequency
 #	How often Zabbix will perform update of configuration cache, in seconds.
@@ -340,7 +408,10 @@ CacheSize={{zbx_server_CacheSize}}
 # Mandatory: no
 # Range: 1-3600
 # Default:
-CacheUpdateFrequency={{zbx_server_CacheUpdateFrequency}}
+# CacheUpdateFrequency=60
+{% if zabbix_server_CacheUpdateFrequency %}
+CacheUpdateFrequency={{ zabbix_server_CacheUpdateFrequency }}
+{% endif %}
 
 ### Option: StartDBSyncers
 #	Number of pre-forked instances of DB Syncers
@@ -348,7 +419,10 @@ CacheUpdateFrequency={{zbx_server_CacheUpdateFrequency}}
 # Mandatory: no
 # Range: 1-100
 # Default:
-StartDBSyncers={{zbx_server_StartDBSyncers}}
+# StartDBSyncers=4
+{% if zabbix_server_StartDBSyncers %}
+StartDBSyncers={{ zabbix_server_StartDBSyncers }}
+{% endif %}
 
 ### Option: HistoryCacheSize
 #	Size of history cache, in bytes.
@@ -357,7 +431,10 @@ StartDBSyncers={{zbx_server_StartDBSyncers}}
 # Mandatory: no
 # Range: 128K-2G
 # Default:
-HistoryCacheSize={{zbx_server_HistoryCacheSize}}
+# HistoryCacheSize=8M
+{% if zabbix_server_HistoryCacheSize %}
+HistoryCacheSize={{ zabbix_server_HistoryCacheSize }}
+{% endif %}
 
 ### Option: TrendCacheSize
 #	Size of trend cache, in bytes.
@@ -366,7 +443,10 @@ HistoryCacheSize={{zbx_server_HistoryCacheSize}}
 # Mandatory: no
 # Range: 128K-2G
 # Default:
-TrendCacheSize={{zbx_server_TrendCacheSize}}
+# TrendCacheSize=4M
+{% if zabbix_server_TrendCacheSize %}
+TrendCacheSize={{ zabbix_server_TrendCacheSize }}
+{% endif %}
 
 ### Option: HistoryTextCacheSize
 #	Size of text history cache, in bytes.
@@ -375,17 +455,23 @@ TrendCacheSize={{zbx_server_TrendCacheSize}}
 # Mandatory: no
 # Range: 128K-2G
 # Default:
-HistoryTextCacheSize={{zbx_server_HistoryTextCacheSize}}
+# HistoryTextCacheSize=16M
+{% if zabbix_server_HistoryTextCacheSize %}
+HistoryTextCacheSize={{ zabbix_server_HistoryTextCacheSize }}
+{% endif %}
 
 ### Option: ValueCacheSize
 #	Size of history value cache, in bytes.
-#	Shared memory size for caching item history data requests
+#	Shared memory size for caching item history data requests.
 #	Setting to 0 disables value cache.
 #
 # Mandatory: no
 # Range: 0,128K-64G
 # Default:
-ValueCacheSize={{zbx_server_ValueCacheSize}}
+# ValueCacheSize=8M
+{% if zabbix_server_ValueCacheSize %}
+ValueCacheSize={{ zabbix_server_ValueCacheSize }}
+{% endif %}
 
 ### Option: Timeout
 #	Specifies how long we wait for agent, SNMP device or external check (in seconds).
@@ -393,7 +479,10 @@ ValueCacheSize={{zbx_server_ValueCacheSize}}
 # Mandatory: no
 # Range: 1-30
 # Default:
-Timeout={{zbx_server_Timeout}}
+# Timeout=3
+{% if zabbix_server_Timeout %}
+Timeout={{ zabbix_server_Timeout }}
+{% endif %}
 
 ### Option: TrapperTimeout
 #	Specifies how many seconds trapper may spend processing new data.
@@ -401,7 +490,10 @@ Timeout={{zbx_server_Timeout}}
 # Mandatory: no
 # Range: 1-300
 # Default:
-TrapperTimeout={{zbx_server_TrapperTimeout}}
+# TrapperTimeout=300
+{% if zabbix_server_TrapperTimeout %}
+TrapperTimeout={{ zabbix_server_TrapperTimeout }}
+{% endif %}
 
 ### Option: UnreachablePeriod
 #	After how many seconds of unreachability treat a host as unavailable.
@@ -409,7 +501,10 @@ TrapperTimeout={{zbx_server_TrapperTimeout}}
 # Mandatory: no
 # Range: 1-3600
 # Default:
-UnreachablePeriod={{zbx_server_UnreachablePeriod}}
+# UnreachablePeriod=45
+{% if zabbix_server_UnreachablePeriod %}
+UnreachablePeriod={{ zabbix_server_UnreachablePeriod }}
+{% endif %}
 
 ### Option: UnavailableDelay
 #	How often host is checked for availability during the unavailability period, in seconds.
@@ -417,7 +512,10 @@ UnreachablePeriod={{zbx_server_UnreachablePeriod}}
 # Mandatory: no
 # Range: 1-3600
 # Default:
-UnavailableDelay={{zbx_server_UnavailableDelay}}
+# UnavailableDelay=60
+{% if zabbix_server_UnavailableDelay %}
+UnavailableDelay={{ zabbix_server_UnavailableDelay }}
+{% endif %}
 
 ### Option: UnreachableDelay
 #	How often host is checked for availability during the unreachability period, in seconds.
@@ -425,7 +523,10 @@ UnavailableDelay={{zbx_server_UnavailableDelay}}
 # Mandatory: no
 # Range: 1-3600
 # Default:
-UnreachableDelay={{zbx_server_UnreachableDelay}}
+# UnreachableDelay=15
+{% if zabbix_server_UnreachableDelay %}
+UnreachableDelay={{ zabbix_server_UnreachableDelay }}
+{% endif %}
 
 ### Option: AlertScriptsPath
 #	Full path to location of custom alert scripts.
@@ -434,8 +535,9 @@ UnreachableDelay={{zbx_server_UnreachableDelay}}
 # Mandatory: no
 # Default:
 # AlertScriptsPath=${datadir}/zabbix/alertscripts
-
-AlertScriptsPath={{zbx_server_AlertScriptsPath}}
+{% if zabbix_server_AlertScriptsPath %}
+AlertScriptsPath={{ zabbix_server_AlertScriptsPath }}
+{% endif %}
 
 ### Option: ExternalScripts
 #	Full path to location of external scripts.
@@ -444,8 +546,9 @@ AlertScriptsPath={{zbx_server_AlertScriptsPath}}
 # Mandatory: no
 # Default:
 # ExternalScripts=${datadir}/zabbix/externalscripts
-
-ExternalScripts={{zbx_server_ExternalScripts}}
+{% if zabbix_server_ExternalScripts %}
+ExternalScripts={{ zabbix_server_ExternalScripts }}
+{% endif %}
 
 ### Option: FpingLocation
 #	Location of fping.
@@ -453,7 +556,10 @@ ExternalScripts={{zbx_server_ExternalScripts}}
 #
 # Mandatory: no
 # Default:
-FpingLocation={{zbx_server_FpingLocation}}
+# FpingLocation=/usr/sbin/fping
+{% if zabbix_server_FpingLocation %}
+FpingLocation={{ zabbix_server_FpingLocation }}
+{% endif %}
 
 ### Option: Fping6Location
 #	Location of fping6.
@@ -462,17 +568,19 @@ FpingLocation={{zbx_server_FpingLocation}}
 #
 # Mandatory: no
 # Default:
-Fping6Location={{zbx_server_Fping6Location}}
+# Fping6Location=/usr/sbin/fping6
+{% if zabbix_server_Fping6Location %}
+Fping6Location={{ zabbix_server_Fping6Location }}
+{% endif %}
 
 ### Option: SSHKeyLocation
 #	Location of public and private keys for SSH checks and actions.
 #
 # Mandatory: no
 # Default:
-{% if zbx_server_SSHKeyLocation %}
-SSHKeyLocation={{zbx_server_SSHKeyLocation}}
-{% else %}
 # SSHKeyLocation=
+{% if zabbix_server_SSHKeyLocation %}
+SSHKeyLocation={{ zabbix_server_SSHKeyLocation }}
 {% endif %}
 
 ### Option: LogSlowQueries
@@ -483,14 +591,20 @@ SSHKeyLocation={{zbx_server_SSHKeyLocation}}
 # Mandatory: no
 # Range: 1-3600000
 # Default:
-LogSlowQueries={{zbx_server_LogSlowQueries}}
+# LogSlowQueries=0
+{% if zabbix_server_LogSlowQueries %}
+LogSlowQueries={{ zabbix_server_LogSlowQueries }}
+{% endif %}
 
 ### Option: TmpDir
 #	Temporary directory.
 #
 # Mandatory: no
 # Default:
-TmpDir={{zbx_server_TmpDir}}
+# TmpDir=/tmp
+{% if zabbix_server_TmpDir %}
+TmpDir={{ zabbix_server_TmpDir }}
+{% endif %}
 
 ### Option: StartProxyPollers
 #	Number of pre-forked instances of pollers for passive proxies.
@@ -498,7 +612,10 @@ TmpDir={{zbx_server_TmpDir}}
 # Mandatory: no
 # Range: 0-250
 # Default:
-StartProxyPollers={{zbx_server_StartProxyPollers}}
+# StartProxyPollers=1
+{% if zabbix_server_StartProxyPollers %}
+StartProxyPollers={{ zabbix_server_StartProxyPollers }}
+{% endif %}
 
 ### Option: ProxyConfigFrequency
 #	How often Zabbix Server sends configuration data to a Zabbix Proxy in seconds.
@@ -507,7 +624,10 @@ StartProxyPollers={{zbx_server_StartProxyPollers}}
 # Mandatory: no
 # Range: 1-3600*24*7
 # Default:
-ProxyConfigFrequency={{zbx_server_ProxyConfigFrequency}}
+# ProxyConfigFrequency=3600
+{% if zabbix_server_ProxyConfigFrequency %}
+ProxyConfigFrequency={{ zabbix_server_ProxyConfigFrequency }}
+{% endif %}
 
 ### Option: ProxyDataFrequency
 #	How often Zabbix Server requests history data from a Zabbix Proxy in seconds.
@@ -516,26 +636,35 @@ ProxyConfigFrequency={{zbx_server_ProxyConfigFrequency}}
 # Mandatory: no
 # Range: 1-3600
 # Default:
-ProxyDataFrequency={{zbx_server_ProxyDataFrequency}}
+# ProxyDataFrequency=1
+{% if zabbix_server_ProxyDataFrequency %}
+ProxyDataFrequency={{ zabbix_server_ProxyDataFrequency }}
+{% endif %}
 
 ### Option: AllowRoot
 #	Allow the server to run as 'root'. If disabled and the server is started by 'root', the server
-#	will try to switch to user 'zabbix' instead. Has no effect if started under a regular user.
+#	will try to switch to the user specified by the User configuration option instead.
+#	Has no effect if started under a regular user.
 #	0 - do not allow
 #	1 - allow
 #
 # Mandatory: no
 # Default:
-AllowRoot={{zbx_server_AllowRoot}}
+# AllowRoot=0
+{% if zabbix_server_AllowRoot %}
+AllowRoot={{ zabbix_server_AllowRoot }}
+{% endif %}
 
-## Option: User
-#  Drop privileges to a specific, existing user on the system.
-#  Only has effect if run as 'root' and AllowRoot is disabled.
+### Option: User
+#	Drop privileges to a specific, existing user on the system.
+#	Only has effect if run as 'root' and AllowRoot is disabled.
 #
 # Mandatory: no
 # Default:
 # User=zabbix
-
+{% if zabbix_server_User %}
+User={{ zabbix_server_User }}
+{% endif %}
 
 ### Option: Include
 #	You may include individual files or all files in a directory in the configuration file.
@@ -543,40 +672,49 @@ AllowRoot={{zbx_server_AllowRoot}}
 #
 # Mandatory: no
 # Default:
-{% for line in zbx_server_Include %}
-Include={line}
-{% else %}
 # Include=
-{% endfor %}
 
 # Include=/usr/local/etc/zabbix_server.general.conf
 # Include=/usr/local/etc/zabbix_server.conf.d/
+# Include=/usr/local/etc/zabbix_server.conf.d/*.conf
 
-## Option: SSLCertLocation
-#  Location of SSL client certificates.
-#  This parameter is used only in web monitoring.
+{% for i in zabbix_server_Include %}
+Include={{ i }}
+{% endfor %}
+
+### Option: SSLCertLocation
+#	Location of SSL client certificates.
+#	This parameter is used only in web monitoring.
 #
 # Mandatory: no
 # Default:
 # SSLCertLocation=${datadir}/zabbix/ssl/certs
+{% if zabbix_server_SSLCertLocation %}
+SSLCertLocation={{ zabbix_server_SSLCertLocation }}
+{% endif %}
 
 ### Option: SSLKeyLocation
-#  Location of private keys for SSL client certificates.
-#  This parameter is used only in web monitoring.
+#	Location of private keys for SSL client certificates.
+#	This parameter is used only in web monitoring.
 #
 # Mandatory: no
 # Default:
 # SSLKeyLocation=${datadir}/zabbix/ssl/keys
+{% if zabbix_server_SSLKeyLocation %}
+SSLKeyLocation={{ zabbix_server_SSLKeyLocation }}
+{% endif %}
 
 ### Option: SSLCALocation
-#  Override the location of certificate authority (CA) files for SSL server certificate verification.
-#  If not set, system-wide directory will be used.
-#  This parameter is used only in web monitoring.
+#	Override the location of certificate authority (CA) files for SSL server certificate verification.
+#	If not set, system-wide directory will be used.
+#	This parameter is used only in web monitoring.
 #
 # Mandatory: no
 # Default:
 # SSLCALocation=
-
+{% if zabbix_server_SSLCALocation %}
+SSLCALocation={{ zabbix_server_SSLCALocation }}
+{% endif %}
 
 ####### LOADABLE MODULES #######
 
@@ -586,7 +724,10 @@ Include={line}
 #
 # Mandatory: no
 # Default:
-LoadModulePath={{zbx_server_LoadModulePath}}
+# LoadModulePath=${libdir}/modules
+{% if zabbix_server_LoadModulePath %}
+LoadModulePath={{ zabbix_server_LoadModulePath }}
+{% endif %}
 
 ### Option: LoadModule
 #	Module to load at server startup. Modules are used to extend functionality of the server.
@@ -596,8 +737,7 @@ LoadModulePath={{zbx_server_LoadModulePath}}
 #
 # Mandatory: no
 # Default:
-{% for line in zbx_server_LoadModule %}
-LoadModule={{zbx_server_LoadModule}}
-{% else %}
 # LoadModule=
-{% endfor %}
+{% if zabbix_server_LoadModule %}
+LoadModule={{ zabbix_server_LoadModule }}
+{% endif %}
