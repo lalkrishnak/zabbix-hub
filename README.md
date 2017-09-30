@@ -38,3 +38,17 @@ Installation
 Place the script in the AlertScriptPath directly and must be executable by the user running the zabbix_server binary on the zabbix server.
 
 	$ chmod +x /usr/local/share/zabbix/alertscripts/zabbix-sendmail
+
+Zabbix Server Install
+========================
+
+About
+-----
+Role that contain the playbooks to install [Zabbix](http://www.zabbix.com/) server on a Linux node along with its components.
+
+Installation
+------------
+
+Place the zabbix-install role directory inside your default roles path. Replace the zabbix host details inside the main.yaml playbook and execute the below command.
+
+	$ ansible-playbook main.yaml
