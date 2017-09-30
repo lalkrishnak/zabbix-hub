@@ -1,4 +1,4 @@
-- name: restart zabbix-server
+- name: Restart zabbix-server
   sudo: yes
   service:
     name: zabbix-server
