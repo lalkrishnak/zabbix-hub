@@ -1,7 +1,4 @@
 ---
-- hosts: ZabbixServer
-  user: ansible
-  sudo: yes
-  sudo_user: root
+- hosts: localhost
   roles:
     - zabbix-server
