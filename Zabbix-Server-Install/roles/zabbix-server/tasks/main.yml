@@ -1,15 +1,15 @@
-- name: Enable zabbix repo
+- name: Enable Zabbix Repo
   template: 
     src: zabbix.repo.j2
     dest: /etc/yum.repos.d/zabbix.repo
-- name: install packages
+- name: Install Zabbix Packages
   yum:
     name: "{{ item.name }}"
     enablerepo: "{{ item.enablerepo }}"
     state: present
-  with_items: zabbix_server_install_packages
+  with_items: "{{ zabbix_server_install_packages }}"
 
-- name: configure zabbix-server.conf
+- name: Configure zabbix-server.conf
   template:
     dest: /etc/zabbix/zabbix_server.conf
     src: zabbix_server.conf.j2
@@ -18,13 +18,13 @@
     mode: 0640
   notify: restart zabbix-server
 
-- name: ensure started zabbix-server
+- name: Ensure zabbix-server Service Started
   service:
     name: zabbix-server
     state: started
     enabled: yes
 
-- name: create zabbix database user
+- name: Create Zabbix Database DB User
   mysql_user:
     login_host: "{{ zabbix_server_database_login_host }}"
     login_password: "{{ zabbix_server_database_login_password }}"
@@ -36,7 +36,7 @@
     priv: "{{ zabbix_server_DBName }}.*:ALL"
     state: present
 
-- name: create zabbix database
+- name: Create Zabbix DB
   mysql_db:
     encoding: utf8
     login_host: "{{ zabbix_server_database_login_host }}"
@@ -46,11 +46,11 @@
     name: "{{ zabbix_server_DBName }}"
     state: present
 
-- name: check installed zabbix-server-mysql version
+- name: Check zabbix-server-mysql Version
   shell: zabbix_server_mysql --version | awk '/Zabbix/{ sub(/v/, "", $3); print $3 }'
   register: installed_version
 
-- name: table exists?
+- name: Check Table Exists
   command: >
     mysql --host={{ zabbix_server_DBHost }}
           --password={{ zabbix_server_DBPassword }}
@@ -62,7 +62,7 @@
   environment:
     PATH: "{{ ansible_env.PATH }}:{{ zabbix_server_mysql_bindir }}"
 
-- name: migration zabbix database
+- name: Migration of Zabbix DB
   mysql_db:
     login_host: "{{ zabbix_server_database_login_host }}"
     login_user: "{{ zabbix_server_database_login_user }}"
