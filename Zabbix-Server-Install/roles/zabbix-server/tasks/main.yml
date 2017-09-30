@@ -1,5 +1,8 @@
+- name: Enable zabbix repo
+  template: 
+    src: zabbix.repo.j2
+    dest: /etc/yum.repos.d/zabbix.repo
 - name: install packages
-  sudo: yes
   yum:
     name: "{{ item.name }}"
     enablerepo: "{{ item.enablerepo }}"
@@ -7,7 +10,6 @@
   with_items: zabbix_server_install_packages
 
 - name: configure zabbix-server.conf
-  sudo: yes
   template:
     dest: /etc/zabbix/zabbix_server.conf
     src: zabbix_server.conf.j2
@@ -17,7 +19,6 @@
   notify: restart zabbix-server
 
 - name: ensure started zabbix-server
-  sudo: yes
   service:
     name: zabbix-server
     state: started
