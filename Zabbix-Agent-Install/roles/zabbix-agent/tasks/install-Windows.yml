@@ -1,0 +1,15 @@
+---
+- name: Download Zabbix Agent for Windows
+  win_get_url:
+    url: https://www.zabbix.com/downloads/{{ zabbix_agent_version }}/zabbix_agents_{{ zabbix_agent_version }}.win.zip
+    dest: C:\zabbix.zip
+
+- name: Unzip Agent File
+  win_unzip:
+    src: C:\zabbix.zip
+    dest: C:\zabbix
+    delete_archive: yes
+
+- name: Config Agent
+  command: "zabbix_agentd.exe --config C:\zabbix\conf\zabbix_agentd.win.conf --install"
+    chdir: C:\zabbix\

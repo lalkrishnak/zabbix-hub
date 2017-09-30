@@ -1,0 +1,32 @@
+---
+- include: install-{{ ansible_os_family }}.yml
+  static: no
+
+- name: Copy zabbix configuration in place.
+  template:
+    src: zabbix_agentd.conf.j2
+    dest: /etc/zabbix/zabbix_agentd.conf
+  notify:
+    - restart zabbix-agent
+  when: {{ ansible_os_family }} == RedHat
+
+- name: Modify /etc/zabbix permissions.
+  file:
+    path: /etc/zabbix
+    owner: zabbix
+    group: root
+    recurse: yes
+    state: directory
+  when: {{ ansible_os_family }} == RedHat
+
+- name: Ensure zabbix-agent is started and enabled to start at boot.
+  service: name=zabbix-agent state=started enabled=yes
+  when: {{ ansible_os_family }} == RedHat
+
+- name: Copy zabbix configuration in place.
+  template:
+    src: zabbix_agentd.win.conf.j2
+    dest: C:\zabbix\conf\zabbix_agentd.win.conf.j2
+  notify:
+    - restart zabbix-agent-windows
+  when: {{ ansible_os_family }} == Windows

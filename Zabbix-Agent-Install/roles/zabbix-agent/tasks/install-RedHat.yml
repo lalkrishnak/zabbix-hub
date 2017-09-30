@@ -1,0 +1,33 @@
+---
+- name: Add multiple zabbix repositories into the same file (1/2)
+  yum_repository:
+    name: zabbix
+    description: Zabbix Official Repository - $basearch
+    baseurl: http://repo.zabbix.com/zabbix/{{ zabbix_agent_version }}/rhel/{{ ansible_distribution_major_version }}/$basearch/
+    gpgcheck: no
+    enabled: no
+
+- name: Add multiple zabbix repositories into the same file (2/2)
+  yum_repository:
+    name: zabbix-non-supported
+    description: Zabbix Official Repository non-supported - $basearch
+    baseurl: http://repo.zabbix.com/non-supported/rhel/{{ ansible_distribution_major_version }}/$basearch/
+    gpgcheck: no
+    enabled: no
+
+- name: Ensure zabbix is installed.
+  yum:
+    name: zabbix-agent
+    enablerepo: zabbix  
+
+- name: Install dumb init.
+  get_url:
+    dest: /usr/bin/dumb-init
+    url: https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64
+    mode: 0775
+    validate_certs: no
+  when: ansible_connection == 'docker'
+
+- name: Purge yum cache.
+  command: yum clean all
+  when: ansible_connection == 'docker'

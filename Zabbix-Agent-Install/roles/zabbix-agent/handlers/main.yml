@@ -1,0 +1,7 @@
+---
+- name: restart zabbix-agent
+  service: name=zabbix-agent state=restarted
+
+- name: restart zabbix-agent-windows
+  command: "zabbix_agentd.exe --start"
+    chdir: c:\zabbix
